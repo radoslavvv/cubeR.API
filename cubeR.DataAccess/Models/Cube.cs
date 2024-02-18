@@ -9,5 +9,7 @@
         public int SidesCount { get; set; }
 
         public int PiecesCount { get; set; }
+
+        public List<Solve> Solves { get; set; }
     }
 }

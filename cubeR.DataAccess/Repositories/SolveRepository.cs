@@ -19,6 +19,11 @@ namespace cubeR.DataAccess
             return solveModel;
         }
 
+        public async Task<List<Solve>> GetAllAsync()
+        {
+            return await _context.Solves.ToListAsync();
+        }
+
         public async Task<Solve?> GetByIdAsync(int id)
         {
             return await _context.Solves.FirstOrDefaultAsync(s=>s.Id == id);

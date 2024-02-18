@@ -5,15 +5,22 @@ namespace cubeR.DataAccess
 {
     public class SolveCreateRequestDTO
     {
-        [EnumDataType(typeof(SolveType), ErrorMessage = "Invalid Solve Type.")]
+        [Required]
+        [EnumDataType(typeof(SolveType), ErrorMessage = "Invalid Solve Type!")]
         public string SolveType { get; set; } = string.Empty;
 
         public int CubeId { get; set; }
+
+        [Required]
+        [MinLength(1, ErrorMessage = "Scramble cannot be empty!")]
+        [MaxLength(250, ErrorMessage = "Scramble cannot be more than 250 characters!")]
         public string Scramble { get; set; } = string.Empty;
 
+        [Required]
         public DateTime LoggedDate { get; set; }
 
-        [RegularExpression(@"^(\d{1,2}:)?[0-5]?\d:[0-5]?\d$", ErrorMessage = "Invalid Solve Time.")]
+        [Required]
+        [RegularExpression(@"^(\d+):([0-5]?\d):([0-5]?\d):(\d{1,3})$", ErrorMessage = "Invalid Solve Time! Correct Solve Time format: hh:mm:ss:SSS")]
         public string SolveTime { get; set; } = string.Empty;
     }
 }

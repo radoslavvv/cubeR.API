@@ -19,7 +19,16 @@ namespace cubeRAPI.Controllers
             _cubeRepository = cubeRepository;
         }
 
-        [HttpGet("last/{count}")]
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            List<Solve> solves = await _solveRepository.GetAllAsync();
+            IEnumerable<SolveDTO> solvesDTOs = solves.Select(s => s.ToSolveDTO());
+
+            return Ok(solvesDTOs);
+        }
+
+        [HttpGet("last/{count:int}")]
         public async Task<IActionResult> GetLastNSolves([FromRoute] int count)
         {
             List<Solve> solves = await _solveRepository.GetLastNSolvesAsync(count);
@@ -28,7 +37,7 @@ namespace cubeRAPI.Controllers
             return Ok(solvesDTOs);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             Solve? solve = await _solveRepository.GetByIdAsync(id);
@@ -44,11 +53,16 @@ namespace cubeRAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] SolveCreateRequestDTO solveCreateRequestDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             Cube? cube = await _cubeRepository.GetCubeByIdAsync(solveCreateRequestDTO.CubeId);
 
             if(cube == null)
             {
-                return NotFound();
+                return NotFound("Cube not found.");
             }
 
             if(!Enum.TryParse(solveCreateRequestDTO.SolveType, out SolveType solveTypeParsed))

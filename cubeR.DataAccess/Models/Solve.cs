@@ -1,4 +1,5 @@
 ﻿using cubeR.DataAccess.Enums;
+using cubeR.DataAccess.Models;
 
 namespace cubeR.DataAccess
 {
@@ -15,5 +16,9 @@ namespace cubeR.DataAccess
         public DateTime LoggedDate { get; set; } = DateTime.Now;
 
         public TimeSpan SolveTime { get; set; }
+
+        public int UserId { get; set; }
+
+        public User? User { get; set; }
     }
 }

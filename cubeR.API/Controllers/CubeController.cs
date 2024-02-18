@@ -14,7 +14,7 @@ namespace cubeR.API.Controllers
             _repository = repository;
         }
 
-        [HttpGet("all")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             List<Cube> cubes = await _repository.GetAllCubesAsync();
@@ -24,7 +24,7 @@ namespace cubeR.API.Controllers
             return Ok(cubeDTOs);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
             Cube? cube = await _repository.GetCubeByIdAsync(id);
@@ -52,7 +52,7 @@ namespace cubeR.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, createdCube.ToCubeDTO());
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut("update/{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CubeUpdateRequestDTO cubeUpdateRequestDTO)
         {
             if (!ModelState.IsValid)
@@ -70,7 +70,7 @@ namespace cubeR.API.Controllers
             return Ok(cubeModel.ToCubeDTO());
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("delete/{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             Cube? cubeModel = await _repository.DeleteCubeAsync(id);
