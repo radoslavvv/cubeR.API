@@ -2,10 +2,10 @@
 
 namespace cubeR.DataAccess
 {
-    public class CubeCreateRequestDTO
+    public record CubeCreateRequestDTO
     {
         [Required]
-        [MinLength(1,ErrorMessage = "Name cannot be empty!")]
+        [MinLength(1, ErrorMessage = "Name cannot be empty!")]
         [MaxLength(250, ErrorMessage = "Name cannot be more than 250 characters!")]
         public string Name { get; set; } = string.Empty;
 
@@ -14,5 +14,10 @@ namespace cubeR.DataAccess
 
         [Required]
         public int PiecesCount { get; set; }
+
+        public Cube FromCreateRequestDTOToCube()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

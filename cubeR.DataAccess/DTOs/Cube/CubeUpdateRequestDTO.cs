@@ -2,7 +2,7 @@
 
 namespace cubeR.DataAccess
 {
-    public class CubeUpdateRequestDTO
+    public record CubeUpdateRequestDTO
     {
         [Required]
         [MinLength(1, ErrorMessage = "Name cannot be empty!")]

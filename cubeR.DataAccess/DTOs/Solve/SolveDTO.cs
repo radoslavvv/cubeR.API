@@ -2,14 +2,14 @@
 
 namespace cubeR.DataAccess
 {
-    public class SolveDTO
+    public record SolveDTO
     {
         public int Id { get; set; }
 
         public SolveType SolveType { get; set; }
 
         public int? CubeId { get; set; }
-        public string Scramble { get; set; }
+        public string Scramble { get; set; } = string.Empty;
 
         public DateTime LoggedDate { get; set; }
 

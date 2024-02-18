@@ -1,7 +1,7 @@
 ﻿using cubeR.DataAccess;
 using cubeR.DataAccess.Enums;
 
-namespace cubeR.API.Mappers
+namespace cubeR.BusinessLogic
 {
     public static class SolveMapper
     {

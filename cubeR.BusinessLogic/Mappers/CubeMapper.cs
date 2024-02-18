@@ -1,6 +1,6 @@
 ﻿using cubeR.DataAccess;
 
-namespace cubeR.API.Mappers
+namespace cubeR.BusinessLogic
 {
     public static class CubeMapper
     {

@@ -1,4 +1,5 @@
-﻿using cubeR.API.Mappers;
+﻿using cubeR.BusinessLogic;
+using cubeR.BusinessLogic.Services.Contracts;
 using cubeR.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,17 +10,19 @@ namespace cubeR.API.Controllers
     public class CubeController:ControllerBase
     {
         private readonly ICubeRepository _repository;
-        public CubeController(ICubeRepository repository)
+
+        private readonly ICubeService _cubeService;
+
+        public CubeController(ICubeRepository repository, ICubeService cubeService)
         {
             _repository = repository;
+            _cubeService = cubeService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            List<Cube> cubes = await _repository.GetAllCubesAsync();
-
-            IEnumerable<CubeDTO> cubeDTOs = cubes.Select(c => c.ToCubeDTO());
+            List<CubeDTO> cubeDTOs = await _cubeService.GetCubesAsync();
 
             return Ok(cubeDTOs);
         }
@@ -27,14 +30,14 @@ namespace cubeR.API.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
-            Cube? cube = await _repository.GetCubeByIdAsync(id);
+            CubeDTO? cubeDTO = await _cubeService.GetCubeByIdAsync(id);
 
-            if(cube == null)
+            if(cubeDTO == null)
             {
                 return NotFound();
             }
 
-            return Ok(cube.ToCubeDTO());
+            return Ok(cubeDTO);
         }
 
         [HttpPost("create")]

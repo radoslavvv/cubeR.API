@@ -10,6 +10,6 @@
 
         public int PiecesCount { get; set; }
 
-        public List<Solve> Solves { get; set; }
+        public List<Solve> Solves { get; set; } = new List<Solve>();
     }
 }

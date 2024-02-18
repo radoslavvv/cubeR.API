@@ -1,6 +1,6 @@
 ﻿namespace cubeR.DataAccess
 {
-    public class CubeDTO
+    public record CubeDTO
     {
         public int Id { get; set; }
 

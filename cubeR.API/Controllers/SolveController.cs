@@ -1,4 +1,4 @@
-﻿using cubeR.API.Mappers;
+﻿using cubeR.BusinessLogic.Services.Contracts;
 using cubeR.DataAccess;
 using cubeR.DataAccess.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -12,42 +12,40 @@ namespace cubeRAPI.Controllers
         private readonly ISolveRepository _solveRepository;
         private readonly ICubeRepository _cubeRepository;
 
+        private readonly ISolveService _solveService;
 
-        public SolveController(ISolveRepository repository, ICubeRepository cubeRepository)
+        public SolveController(ISolveRepository repository, ICubeRepository cubeRepository, ISolveService solveService)
         {
             _solveRepository = repository;
             _cubeRepository = cubeRepository;
+            _solveService = solveService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            List<Solve> solves = await _solveRepository.GetAllAsync();
-            IEnumerable<SolveDTO> solvesDTOs = solves.Select(s => s.ToSolveDTO());
-
+            IEnumerable<SolveDTO> solvesDTOs = await _solveService.GetAllSolvesAsync();
             return Ok(solvesDTOs);
         }
 
         [HttpGet("last/{count:int}")]
         public async Task<IActionResult> GetLastNSolves([FromRoute] int count)
         {
-            List<Solve> solves = await _solveRepository.GetLastNSolvesAsync(count);
-            IEnumerable<SolveDTO> solvesDTOs = solves.Select(s => s.ToSolveDTO());
-
+            IEnumerable<SolveDTO> solvesDTOs = await _solveService.GetLastNSolvesAsync(count);
             return Ok(solvesDTOs);
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            Solve? solve = await _solveRepository.GetByIdAsync(id);
+            SolveDTO? solveDTO = await _solveService.GetSolveByIdAsync(id);
 
-            if(solve == null)
+            if(solveDTO == null)
             {
                 return NotFound();
             }
 
-            return Ok(solve);
+            return Ok(solveDTO);
         }
 
         [HttpPost("create")]
@@ -75,11 +73,9 @@ namespace cubeRAPI.Controllers
                 return BadRequest("Solve Time is not valid.");
             }
 
-            Solve solveModel = solveCreateRequestDTO.FromCreateRequestDTOToSolve();
+            SolveDTO createdSolveDTO = await _solveService.CreateSolveAsync(solveCreateRequestDTO);
 
-            Solve createdSolve = await _solveRepository.CreateAsync(solveModel);
-
-            return CreatedAtAction(nameof(GetById), new { id = createdSolve.Id }, createdSolve.ToSolveDTO());
+            return CreatedAtAction(nameof(GetById), new { id = createdSolveDTO.Id }, createdSolveDTO);
         }
     }
 }

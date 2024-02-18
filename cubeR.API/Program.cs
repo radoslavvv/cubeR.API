@@ -1,3 +1,5 @@
+using cubeR.BusinessLogic.Services;
+using cubeR.BusinessLogic.Services.Contracts;
 using cubeR.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -20,6 +22,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<ISolveRepository, SolveRepository>();
 builder.Services.AddScoped<ICubeRepository, CubeRepository>();
+
+builder.Services.AddScoped<ISolveService, SolveService>();
 
 var app = builder.Build();
 

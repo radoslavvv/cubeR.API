@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace cubeR.DataAccess
 {
-    public class SolveCreateRequestDTO
+    public record SolveCreateRequestDTO
     {
         [Required]
         [EnumDataType(typeof(SolveType), ErrorMessage = "Invalid Solve Type!")]
