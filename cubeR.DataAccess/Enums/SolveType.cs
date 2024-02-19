@@ -2,8 +2,9 @@
 {
     public enum SolveType
     {
-        Default,
+        TwoHands,
         OneHand,
-        Blindfolded
+        Blindfolded,
+        BlindfoldedOneHand
     }
 }

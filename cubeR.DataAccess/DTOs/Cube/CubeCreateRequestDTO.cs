@@ -14,10 +14,5 @@ namespace cubeR.DataAccess
 
         [Required]
         public int PiecesCount { get; set; }
-
-        public Cube FromCreateRequestDTOToCube()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

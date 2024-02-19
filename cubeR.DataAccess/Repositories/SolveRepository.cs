@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using cubeR.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace cubeR.DataAccess
 {
@@ -11,7 +12,7 @@ namespace cubeR.DataAccess
             _context = context;
         }
 
-        public async Task<Solve> CreateAsync(Solve solveModel)
+        public async Task<Solve> CreateSolveAsync(Solve solveModel)
         {
             await _context.Solves.AddAsync(solveModel);
             await _context.SaveChangesAsync();
@@ -19,12 +20,12 @@ namespace cubeR.DataAccess
             return solveModel;
         }
 
-        public async Task<List<Solve>> GetAllAsync()
+        public async Task<List<Solve>> GetAllSolvesAsync()
         {
             return await _context.Solves.ToListAsync();
         }
 
-        public async Task<Solve?> GetByIdAsync(int id)
+        public async Task<Solve?> GetSolveByIdAsync(int id)
         {
             return await _context.Solves.FirstOrDefaultAsync(s=>s.Id == id);
         }
@@ -32,6 +33,21 @@ namespace cubeR.DataAccess
         public async Task<List<Solve>> GetLastNSolvesAsync(int n)
         {
             return await _context.Solves.OrderByDescending(s => s.Id).Take(n).ToListAsync();
+        }
+
+        public async Task<Solve?> DeleteSolveAsync(int id)
+        {
+            Solve? solveModel = await _context.Solves.FirstOrDefaultAsync(s => s.Id == id);
+
+            if(solveModel is null)
+            {
+                return null;
+            }
+
+            _context.Solves.Remove(solveModel);
+            await _context.SaveChangesAsync();
+
+            return solveModel;
         }
     }
 }

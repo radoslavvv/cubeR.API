@@ -7,23 +7,19 @@ namespace cubeR.API.Controllers
 {
     [ApiController]
     [Route("api/cubes")]
-    public class CubeController:ControllerBase
+    public class CubeController : ControllerBase
     {
-        private readonly ICubeRepository _repository;
-
         private readonly ICubeService _cubeService;
 
-        public CubeController(ICubeRepository repository, ICubeService cubeService)
+        public CubeController(ICubeService cubeService)
         {
-            _repository = repository;
             _cubeService = cubeService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            List<CubeDTO> cubeDTOs = await _cubeService.GetCubesAsync();
-
+            List<CubeDTO> cubeDTOs = await _cubeService.GetAllCubesAsync();
             return Ok(cubeDTOs);
         }
 
@@ -32,7 +28,7 @@ namespace cubeR.API.Controllers
         {
             CubeDTO? cubeDTO = await _cubeService.GetCubeByIdAsync(id);
 
-            if(cubeDTO == null)
+            if (cubeDTO is null)
             {
                 return NotFound();
             }
@@ -43,16 +39,14 @@ namespace cubeR.API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CubeCreateRequestDTO cubeCreateRequestDTO)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            Cube cubeModel = cubeCreateRequestDTO.FromCreateRequestDTOToCube();
+            CubeDTO createdCube = await _cubeService.CreateCubeAsync(cubeCreateRequestDTO);
 
-            Cube createdCube = await _repository.CreateCubeAsync(cubeModel);
-
-            return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, createdCube.ToCubeDTO());
+            return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, createdCube);
         }
 
         [HttpPut("update/{id:int}")]
@@ -63,22 +57,22 @@ namespace cubeR.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            Cube? cubeModel = await _repository.UpdateCubeAsync(id, cubeUpdateRequestDTO);
+            CubeDTO? updatedCube = await _cubeService.UpdateCubeAsync(id, cubeUpdateRequestDTO);
 
-            if(cubeModel == null)
+            if (updatedCube is null)
             {
                 return NotFound();
             }
 
-            return Ok(cubeModel.ToCubeDTO());
+            return Ok(updatedCube);
         }
 
         [HttpDelete("delete/{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            Cube? cubeModel = await _repository.DeleteCubeAsync(id);
+            CubeDTO? cubeModel = await _cubeService.DeleteCubeAsync(id);
 
-            if(cubeModel == null)
+            if (cubeModel is null)
             {
                 return NotFound();
             }

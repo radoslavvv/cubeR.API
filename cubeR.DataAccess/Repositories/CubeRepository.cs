@@ -23,7 +23,7 @@ namespace cubeR.DataAccess
         {
             Cube? cubeModel = _context.Cubes.FirstOrDefault(c => c.Id == id);
 
-            if(cubeModel == null)
+            if(cubeModel is null)
             {
                 return null;
             }
@@ -48,7 +48,7 @@ namespace cubeR.DataAccess
         {
             Cube? cubeModel = await _context.Cubes.FirstOrDefaultAsync(c => c.Id == id);
 
-            if(cubeModel == null)
+            if(cubeModel is null)
             {
                 return null;
             }

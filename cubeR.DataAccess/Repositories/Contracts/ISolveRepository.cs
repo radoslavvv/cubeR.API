@@ -2,12 +2,14 @@
 {
     public interface ISolveRepository
     {
-        Task<List<Solve>> GetAllAsync();
+        Task<List<Solve>> GetAllSolvesAsync();
 
         Task<List<Solve>> GetLastNSolvesAsync(int n);
 
-        Task<Solve?> GetByIdAsync(int id);
+        Task<Solve?> GetSolveByIdAsync(int id);
 
-        Task<Solve> CreateAsync(Solve solveModel);
+        Task<Solve> CreateSolveAsync(Solve solveModel);
+
+        Task<Solve?> DeleteSolveAsync(int id);
     }
 }

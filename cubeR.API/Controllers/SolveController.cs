@@ -9,29 +9,26 @@ namespace cubeRAPI.Controllers
     [ApiController]
     public class SolveController : ControllerBase
     {
-        private readonly ISolveRepository _solveRepository;
-        private readonly ICubeRepository _cubeRepository;
-
         private readonly ISolveService _solveService;
+        private readonly ICubeService _cubeService;
 
-        public SolveController(ISolveRepository repository, ICubeRepository cubeRepository, ISolveService solveService)
+        public SolveController(ISolveService solveService, ICubeService cubeService)
         {
-            _solveRepository = repository;
-            _cubeRepository = cubeRepository;
             _solveService = solveService;
+            _cubeService = cubeService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            IEnumerable<SolveDTO> solvesDTOs = await _solveService.GetAllSolvesAsync();
+            List<SolveDTO> solvesDTOs = await _solveService.GetAllSolvesAsync();
             return Ok(solvesDTOs);
         }
 
         [HttpGet("last/{count:int}")]
         public async Task<IActionResult> GetLastNSolves([FromRoute] int count)
         {
-            IEnumerable<SolveDTO> solvesDTOs = await _solveService.GetLastNSolvesAsync(count);
+            List<SolveDTO> solvesDTOs = await _solveService.GetLastNSolvesAsync(count);
             return Ok(solvesDTOs);
         }
 
@@ -40,7 +37,7 @@ namespace cubeRAPI.Controllers
         {
             SolveDTO? solveDTO = await _solveService.GetSolveByIdAsync(id);
 
-            if(solveDTO == null)
+            if(solveDTO is null)
             {
                 return NotFound();
             }
@@ -56,9 +53,9 @@ namespace cubeRAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            Cube? cube = await _cubeRepository.GetCubeByIdAsync(solveCreateRequestDTO.CubeId);
+            CubeDTO? cube = await _cubeService.GetCubeByIdAsync(solveCreateRequestDTO.CubeId);
 
-            if(cube == null)
+            if(cube is null)
             {
                 return NotFound("Cube not found.");
             }
@@ -76,6 +73,19 @@ namespace cubeRAPI.Controllers
             SolveDTO createdSolveDTO = await _solveService.CreateSolveAsync(solveCreateRequestDTO);
 
             return CreatedAtAction(nameof(GetById), new { id = createdSolveDTO.Id }, createdSolveDTO);
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            SolveDTO? deletedSolve = await _solveService.DeleteSolveAsync(id);
+
+            if(deletedSolve is null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }

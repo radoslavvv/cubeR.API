@@ -9,6 +9,7 @@ namespace cubeR.DataAccess
         public SolveType SolveType { get; set; }
 
         public int? CubeId { get; set; }
+
         public string Scramble { get; set; } = string.Empty;
 
         public DateTime LoggedDate { get; set; }
