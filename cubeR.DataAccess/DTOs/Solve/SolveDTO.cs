@@ -1,19 +1,19 @@
 ﻿using cubeR.DataAccess.Enums;
 
-namespace cubeR.DataAccess
+namespace cubeR.DataAccess.DTOs.Solve;
+
+public record SolveDTO
 {
-    public record SolveDTO
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public SolveType SolveType { get; set; }
+    public SolveType SolveType { get; set; }
 
-        public int? CubeId { get; set; }
+    public int? CubeId { get; set; }
 
-        public string Scramble { get; set; } = string.Empty;
+    public string Scramble { get; set; } = string.Empty;
 
-        public DateTime LoggedDate { get; set; }
+    public DateTime LoggedDate { get; set; }
 
-        public TimeSpan SolveTime { get; set; }
-    }
+    public TimeSpan SolveTime { get; set; }
 }
+

@@ -1,13 +1,13 @@
-﻿namespace cubeR.DataAccess
+﻿namespace cubeR.DataAccess.DTOs.Cube;
+
+public record CubeDTO
 {
-    public record CubeDTO
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-        public int SidesCount { get; set; }
+    public int SidesCount { get; set; }
 
-        public int PiecesCount { get; set; }
-    }
+    public int PiecesCount { get; set; }
 }
+

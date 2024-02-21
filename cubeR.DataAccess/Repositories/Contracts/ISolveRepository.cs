@@ -1,15 +1,17 @@
-﻿namespace cubeR.DataAccess
+﻿using cubeR.DataAccess.Models;
+
+namespace cubeR.DataAccess.Repositories.Contracts;
+
+public interface ISolveRepository
 {
-    public interface ISolveRepository
-    {
-        Task<List<Solve>> GetAllSolvesAsync();
+    Task<List<Solve>> GetAllSolvesAsync();
 
-        Task<List<Solve>> GetLastNSolvesAsync(int n);
+    Task<List<Solve>> GetLastNSolvesAsync(int n);
 
-        Task<Solve?> GetSolveByIdAsync(int id);
+    Task<Solve?> GetSolveByIdAsync(int id);
 
-        Task<Solve> CreateSolveAsync(Solve solveModel);
+    Task<Solve> CreateSolveAsync(Solve solveModel);
 
-        Task<Solve?> DeleteSolveAsync(int id);
-    }
+    Task<Solve?> DeleteSolveAsync(int id);
 }
+

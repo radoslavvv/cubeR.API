@@ -1,15 +1,15 @@
-﻿namespace cubeR.DataAccess
+﻿namespace cubeR.DataAccess.Models;
+
+public class Cube
 {
-    public class Cube
-    {
-        public int Id { get; set; }
-        
-        public string Name { get; set; } = string.Empty; 
+    public int Id { get; set; }
 
-        public int SidesCount { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-        public int PiecesCount { get; set; }
+    public int SidesCount { get; set; }
 
-        public List<Solve> Solves { get; set; } = new List<Solve>();
-    }
+    public int PiecesCount { get; set; }
+
+    public List<Solve> Solves { get; set; } = new List<Solve>();
 }
+

@@ -1,10 +1,10 @@
-﻿namespace cubeR.DataAccess.Enums
+﻿namespace cubeR.DataAccess.Enums;
+
+public enum SolveType
 {
-    public enum SolveType
-    {
-        TwoHands,
-        OneHand,
-        Blindfolded,
-        BlindfoldedOneHand
-    }
+    TwoHands,
+    OneHand,
+    Blindfolded,
+    BlindfoldedOneHand
 }
+

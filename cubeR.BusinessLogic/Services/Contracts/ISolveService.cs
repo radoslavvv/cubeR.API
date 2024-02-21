@@ -1,9 +1,4 @@
-﻿using cubeR.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using cubeR.DataAccess.DTOs.Solve;
 
 namespace cubeR.BusinessLogic.Services.Contracts;
 public interface ISolveService

@@ -1,83 +1,81 @@
-﻿using cubeR.BusinessLogic;
-using cubeR.BusinessLogic.Services.Contracts;
-using cubeR.DataAccess;
+﻿using cubeR.BusinessLogic.Services.Contracts;
+using cubeR.DataAccess.DTOs.Cube;
 using Microsoft.AspNetCore.Mvc;
 
-namespace cubeR.API.Controllers
+namespace cubeR.API.Controllers;
+
+[ApiController]
+[Route("api/cubes")]
+public class CubeController : ControllerBase
 {
-    [ApiController]
-    [Route("api/cubes")]
-    public class CubeController : ControllerBase
+    private readonly ICubeService _cubeService;
+
+    public CubeController(ICubeService cubeService)
     {
-        private readonly ICubeService _cubeService;
+        _cubeService = cubeService;
+    }
 
-        public CubeController(ICubeService cubeService)
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        List<CubeDTO> cubeDTOs = await _cubeService.GetAllCubesAsync();
+        return Ok(cubeDTOs);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        CubeDTO? cubeDTO = await _cubeService.GetCubeByIdAsync(id);
+
+        if (cubeDTO is null)
         {
-            _cubeService = cubeService;
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        return Ok(cubeDTO);
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] CubeCreateRequestDTO cubeCreateRequestDTO)
+    {
+        if (!ModelState.IsValid)
         {
-            List<CubeDTO> cubeDTOs = await _cubeService.GetAllCubesAsync();
-            return Ok(cubeDTOs);
+            return BadRequest(ModelState);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
+        CubeDTO createdCube = await _cubeService.CreateCubeAsync(cubeCreateRequestDTO);
+
+        return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, createdCube);
+    }
+
+    [HttpPut("update/{id:int}")]
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CubeUpdateRequestDTO cubeUpdateRequestDTO)
+    {
+        if (!ModelState.IsValid)
         {
-            CubeDTO? cubeDTO = await _cubeService.GetCubeByIdAsync(id);
-
-            if (cubeDTO is null)
-            {
-                return NotFound();
-            }
-
-            return Ok(cubeDTO);
+            return BadRequest(ModelState);
         }
 
-        [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] CubeCreateRequestDTO cubeCreateRequestDTO)
+        CubeDTO? updatedCube = await _cubeService.UpdateCubeAsync(id, cubeUpdateRequestDTO);
+
+        if (updatedCube is null)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            CubeDTO createdCube = await _cubeService.CreateCubeAsync(cubeCreateRequestDTO);
-
-            return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, createdCube);
+            return NotFound();
         }
 
-        [HttpPut("update/{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CubeUpdateRequestDTO cubeUpdateRequestDTO)
+        return Ok(updatedCube);
+    }
+
+    [HttpDelete("delete/{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        CubeDTO? cubeModel = await _cubeService.DeleteCubeAsync(id);
+
+        if (cubeModel is null)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            CubeDTO? updatedCube = await _cubeService.UpdateCubeAsync(id, cubeUpdateRequestDTO);
-
-            if (updatedCube is null)
-            {
-                return NotFound();
-            }
-
-            return Ok(updatedCube);
+            return NotFound();
         }
 
-        [HttpDelete("delete/{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
-        {
-            CubeDTO? cubeModel = await _cubeService.DeleteCubeAsync(id);
-
-            if (cubeModel is null)
-            {
-                return NotFound();
-            }
-
-            return NoContent();
-        }
+        return NoContent();
     }
 }

@@ -1,15 +1,18 @@
-﻿namespace cubeR.DataAccess
+﻿using cubeR.DataAccess.DTOs.Cube;
+using cubeR.DataAccess.Models;
+
+namespace cubeR.DataAccess.Repositories.Contracts;
+
+public interface ICubeRepository
 {
-    public interface ICubeRepository
-    {
-        Task<List<Cube>> GetAllCubesAsync();
+    Task<List<Cube>> GetAllCubesAsync();
 
-        Task<Cube?> GetCubeByIdAsync(int id);
+    Task<Cube?> GetCubeByIdAsync(int id);
 
-        Task<Cube> CreateCubeAsync(Cube cubeModel);
+    Task<Cube> CreateCubeAsync(Cube cubeModel);
 
-        Task<Cube?> UpdateCubeAsync(int id, CubeUpdateRequestDTO updateCubeRequestDTO);
+    Task<Cube?> UpdateCubeAsync(int id, CubeUpdateRequestDTO updateCubeRequestDTO);
 
-        Task<Cube?> DeleteCubeAsync(int id);
-    }
+    Task<Cube?> DeleteCubeAsync(int id);
 }
+

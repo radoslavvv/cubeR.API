@@ -1,21 +1,20 @@
 ﻿using cubeR.DataAccess.Enums;
 
-namespace cubeR.DataAccess
+namespace cubeR.DataAccess.Models;
+
+public class Solve
 {
-    public class Solve
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public SolveType SolveType { get; set; } = SolveType.TwoHands;
+    public SolveType SolveType { get; set; } = SolveType.TwoHands;
 
-        public int CubeId { get; set; }
+    public int CubeId { get; set; }
 
-        public Cube? Cube { get; set; }
+    public Cube? Cube { get; set; }
 
-        public string Scramble { get; set; } = string.Empty;
+    public string Scramble { get; set; } = string.Empty;
 
-        public DateTime LoggedDate { get; set; } = DateTime.Now;
+    public DateTime LoggedDate { get; set; } = DateTime.Now;
 
-        public TimeSpan SolveTime { get; set; }
-    }
+    public TimeSpan SolveTime { get; set; }
 }
