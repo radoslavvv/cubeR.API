@@ -2,18 +2,19 @@
 
 namespace cubeR.DataAccess.DTOs.Solve;
 
-public record SolveDTO
-{
-    public int Id { get; set; }
+//public record SolveDTO
+//{
+//    public int Id { get; set; }
 
-    public SolveType SolveType { get; set; }
+//    public SolveType SolveType { get; set; }
 
-    public int? CubeId { get; set; }
+//    public int? CubeId { get; set; }
 
-    public string Scramble { get; set; } = string.Empty;
+//    public string Scramble { get; set; } = string.Empty;
 
-    public DateTime LoggedDate { get; set; }
+//    public DateTime LoggedDate { get; set; }
 
-    public TimeSpan SolveTime { get; set; }
-}
+//    public TimeSpan SolveTime { get; set; }
+//}
 
+public record SolveDTO(int Id, SolveType SolveType, int CubeId, string Scramble, DateTime LoggedDate, TimeSpan SolveTime);
