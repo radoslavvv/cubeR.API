@@ -7,4 +7,3 @@ public enum SolveType
     Blindfolded,
     BlindfoldedOneHand
 }
-

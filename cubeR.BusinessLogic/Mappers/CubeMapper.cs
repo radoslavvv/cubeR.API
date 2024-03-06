@@ -7,13 +7,7 @@ public static class CubeMapper
 {
     public static CubeDTO ToCubeDTO(this Cube cubeModel)
     {
-        return new CubeDTO
-        {
-            Id = cubeModel.Id,
-            Name = cubeModel.Name,
-            PiecesCount = cubeModel.PiecesCount,
-            SidesCount = cubeModel.SidesCount,
-        };
+        return new CubeDTO(cubeModel.Id, cubeModel.Name, cubeModel.PiecesCount, cubeModel.SidesCount);
     }
 
     public static Cube FromCreateRequestDTOToCube(this CubeCreateRequestDTO cubeCreateRequestDTO)

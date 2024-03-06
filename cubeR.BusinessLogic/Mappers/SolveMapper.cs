@@ -6,18 +6,9 @@ namespace cubeR.BusinessLogic.Mappers;
 
 public static class SolveMapper
 {
-
     public static SolveDTO ToSolveDTO(this Solve solveModel)
     {
-        return new SolveDTO
-        {
-            Id = solveModel.Id,
-            CubeId = solveModel.CubeId,
-            LoggedDate = solveModel.LoggedDate,
-            Scramble = solveModel.Scramble,
-            SolveTime = solveModel.SolveTime,
-            SolveType = solveModel.SolveType
-        };
+        return new SolveDTO(solveModel.Id, solveModel.SolveType, solveModel.CubeId, solveModel.Scramble, solveModel.LoggedDate, solveModel.SolveTime);
     }
 
     public static Solve FromCreateRequestDTOToSolve(this SolveCreateRequestDTO solveCreateRequestDTO)

@@ -1,86 +1,95 @@
-﻿using cubeR.BusinessLogic.Services.Contracts;
-using cubeR.DataAccess;
-using cubeR.DataAccess.DTOs.Cube;
-using cubeR.DataAccess.DTOs.Solve;
+﻿using cubeR.DataAccess.DTOs.Solve;
+using cubeR.BusinessLogic.Mappers;
 using cubeR.DataAccess.Enums;
+using cubeR.DataAccess.Models;
+using cubeR.DataAccess.Repositories.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace cubeR.API.Controllers;
 
-[Route("api/solve")]
 [ApiController]
+[Route("api/solve")]
 public class SolveController : ControllerBase
 {
-    private readonly ISolveService _solveService;
-    private readonly ICubeService _cubeService;
+    private readonly ISolveRepository _solveRepository;
+    private readonly ICubeRepository _cubeRepository;
 
-    public SolveController(ISolveService solveService, ICubeService cubeService)
+    public SolveController(ISolveRepository solveRepository, ICubeRepository cubeRepository)
     {
-        _solveService = solveService;
-        _cubeService = cubeService;
+        _solveRepository = solveRepository;
+        _cubeRepository = cubeRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        List<SolveDTO> solvesDTOs = await _solveService.GetAllSolvesAsync();
+        List<Solve> solves = await _solveRepository.GetAllSolvesAsync();
+        List<SolveDTO> solvesDTOs = solves.Select(s => s.ToSolveDTO()).ToList();
+
         return Ok(solvesDTOs);
     }
 
     [HttpGet("last/{count:int}")]
     public async Task<IActionResult> GetLastNSolves([FromRoute] int count)
     {
-        List<SolveDTO> solvesDTOs = await _solveService.GetLastNSolvesAsync(count);
+        List<Solve> solves = await _solveRepository.GetLastNSolvesAsync(count);
+        List<SolveDTO> solvesDTOs = solves.Select(s => s.ToSolveDTO()).ToList();
+
         return Ok(solvesDTOs);
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
-        SolveDTO? solveDTO = await _solveService.GetSolveByIdAsync(id);
+        Solve? solve = await _solveRepository.GetSolveByIdAsync(id);
 
-        if (solveDTO is null)
+        if (solve is null)
         {
             return NotFound();
         }
 
-        return Ok(solveDTO);
+        return Ok(solve.ToSolveDTO());
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] SolveCreateRequestDTO solveCreateRequestDTO)
+    public async Task<IActionResult> Create([FromBody] SolveCreateRequestDTO solveCreateRequestDTO,
+        [FromServices] IValidator<SolveCreateRequestDTO> validator)
     {
-        if (!ModelState.IsValid)
+        ValidationResult validationResult = validator.Validate(solveCreateRequestDTO);
+
+        if (!validationResult.IsValid)
         {
-            return BadRequest(ModelState);
+            return BadRequest(validationResult.Errors);
         }
 
-        CubeDTO? cube = await _cubeService.GetCubeByIdAsync(solveCreateRequestDTO.CubeId);
+        Cube? cube = await _cubeRepository.GetCubeByIdAsync(solveCreateRequestDTO.CubeId);
 
         if (cube is null)
         {
             return NotFound("Cube not found.");
         }
 
-        if (!Enum.TryParse(solveCreateRequestDTO.SolveType, out SolveType solveTypeParsed))
-        {
-            return BadRequest("Solve Type is not valid.");
-        }
+        //if (!Enum.TryParse(solveCreateRequestDTO.SolveType, out SolveType solveTypeParsed))
+        //{
+        //    return BadRequest("Solve Type is not valid.");
+        //}
 
-        if (!TimeSpan.TryParse(solveCreateRequestDTO.SolveTime, out TimeSpan solveTimeParsed))
-        {
-            return BadRequest("Solve Time is not valid.");
-        }
+        //if (!TimeSpan.TryParse(solveCreateRequestDTO.SolveTime, out TimeSpan solveTimeParsed))
+        //{
+        //    return BadRequest("Solve Time is not valid.");
+        //}
 
-        SolveDTO createdSolveDTO = await _solveService.CreateSolveAsync(solveCreateRequestDTO);
+        Solve createdSolve = await _solveRepository.CreateSolveAsync(solveCreateRequestDTO.FromCreateRequestDTOToSolve());
 
-        return CreatedAtAction(nameof(GetById), new { id = createdSolveDTO.Id }, createdSolveDTO);
+        return CreatedAtAction(nameof(GetById), new { id = createdSolve.Id }, createdSolve.ToSolveDTO());
     }
 
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("delete/{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        SolveDTO? deletedSolve = await _solveService.DeleteSolveAsync(id);
+        Solve? deletedSolve = await _solveRepository.DeleteSolveAsync(id);
 
         if (deletedSolve is null)
         {

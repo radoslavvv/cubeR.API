@@ -1,5 +1,10 @@
-﻿using cubeR.BusinessLogic.Services.Contracts;
+﻿using cubeR.BusinessLogic.Mappers;
+using cubeR.BusinessLogic.Validations.Cube;
 using cubeR.DataAccess.DTOs.Cube;
+using cubeR.DataAccess.Models;
+using cubeR.DataAccess.Repositories.Contracts;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cubeR.API.Controllers;
@@ -8,68 +13,76 @@ namespace cubeR.API.Controllers;
 [Route("api/cubes")]
 public class CubeController : ControllerBase
 {
-    private readonly ICubeService _cubeService;
+    private readonly ICubeRepository _repository;
 
-    public CubeController(ICubeService cubeService)
+    public CubeController(ICubeRepository repository)
     {
-        _cubeService = cubeService;
+        _repository = repository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        List<CubeDTO> cubeDTOs = await _cubeService.GetAllCubesAsync();
-        return Ok(cubeDTOs);
+        List<Cube> cubes = await _repository.GetAllCubesAsync();
+        List<CubeDTO> cubeDTOS = cubes.Select(c=>c.ToCubeDTO()).ToList();   
+
+        return Ok(cubeDTOS);
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        CubeDTO? cubeDTO = await _cubeService.GetCubeByIdAsync(id);
+        Cube? cube = await _repository.GetCubeByIdAsync(id);
 
-        if (cubeDTO is null)
+        if (cube is null)
         {
             return NotFound();
         }
 
-        return Ok(cubeDTO);
+        return Ok(cube.ToCubeDTO());
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] CubeCreateRequestDTO cubeCreateRequestDTO)
+    public async Task<IActionResult> Create([FromBody] CubeCreateRequestDTO cubeCreateRequestDTO, 
+        [FromServices] IValidator<CubeCreateRequestDTO> validator)
     {
-        if (!ModelState.IsValid)
+        ValidationResult validationResult = validator.Validate(cubeCreateRequestDTO);
+
+        if(!validationResult.IsValid)
         {
-            return BadRequest(ModelState);
+            return BadRequest(validationResult.Errors);
         }
 
-        CubeDTO createdCube = await _cubeService.CreateCubeAsync(cubeCreateRequestDTO);
+        Cube createdCube = await _repository.CreateCubeAsync(cubeCreateRequestDTO.FromCreateRequestDTOToCube());
 
-        return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, createdCube);
+        return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, createdCube.ToCubeDTO());
     }
 
     [HttpPut("update/{id:int}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CubeUpdateRequestDTO cubeUpdateRequestDTO)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CubeUpdateRequestDTO cubeUpdateRequestDTO, 
+        [FromServices] IValidator<CubeUpdateRequestDTO> validator)
     {
-        if (!ModelState.IsValid)
+        ValidationResult validationResult = validator.Validate(cubeUpdateRequestDTO);
+
+        if (!validationResult.IsValid)
         {
-            return BadRequest(ModelState);
+            return BadRequest(validationResult.Errors);
         }
 
-        CubeDTO? updatedCube = await _cubeService.UpdateCubeAsync(id, cubeUpdateRequestDTO);
+        Cube? updatedCube = await _repository.UpdateCubeAsync(id, cubeUpdateRequestDTO);
 
         if (updatedCube is null)
         {
             return NotFound();
         }
 
-        return Ok(updatedCube);
+        return Ok(updatedCube.ToCubeDTO());
     }
 
     [HttpDelete("delete/{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        CubeDTO? cubeModel = await _cubeService.DeleteCubeAsync(id);
+        Cube? cubeModel = await _repository.DeleteCubeAsync(id);
 
         if (cubeModel is null)
         {
