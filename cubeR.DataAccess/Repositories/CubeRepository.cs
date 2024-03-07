@@ -25,7 +25,7 @@ public class CubeRepository : ICubeRepository
 
     public async Task<Cube?> DeleteCubeAsync(int id)
     {
-        Cube? cubeModel = _context.Cubes.FirstOrDefault(c => c.Id == id);
+        Cube? cubeModel = await _context.Cubes.FirstOrDefaultAsync(c => c.Id == id);
 
         if (cubeModel is null)
         {
@@ -38,7 +38,7 @@ public class CubeRepository : ICubeRepository
         return cubeModel;
     }
 
-    public async Task<List<Cube>> GetAllCubesAsync()
+    public async Task<IEnumerable<Cube>> GetCubesAsync()
     {
         return await _context.Cubes.ToListAsync();
     }
@@ -60,6 +60,10 @@ public class CubeRepository : ICubeRepository
         cubeModel.Name = updateCubeRequestDTO.Name;
         cubeModel.SidesCount = updateCubeRequestDTO.SidesCount;
         cubeModel.PiecesCount = updateCubeRequestDTO.PiecesCount;
+        cubeModel.DifficultyLevel = updateCubeRequestDTO.DifficultyLevel;
+        cubeModel.ReleaseYear = updateCubeRequestDTO.ReleaseYear;
+        cubeModel.Material = updateCubeRequestDTO.Material;
+        cubeModel.Weight = updateCubeRequestDTO.Weight;
 
         await _context.SaveChangesAsync();
 

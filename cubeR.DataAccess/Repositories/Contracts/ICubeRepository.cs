@@ -5,7 +5,7 @@ namespace cubeR.DataAccess.Repositories.Contracts;
 
 public interface ICubeRepository
 {
-    Task<List<Cube>> GetAllCubesAsync();
+    Task<IEnumerable<Cube>> GetCubesAsync();
 
     Task<Cube?> GetCubeByIdAsync(int id);
 

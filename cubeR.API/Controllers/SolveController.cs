@@ -1,43 +1,34 @@
 ﻿using cubeR.DataAccess.DTOs.Solve;
-using cubeR.BusinessLogic.Mappers;
-using cubeR.DataAccess.Enums;
 using cubeR.DataAccess.Models;
 using cubeR.DataAccess.Repositories.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using FluentValidation.Results;
+using AutoMapper;
 
 namespace cubeR.API.Controllers;
 
 [ApiController]
-[Route("api/solve")]
+[Route("api/solves")]
 public class SolveController : ControllerBase
 {
     private readonly ISolveRepository _solveRepository;
     private readonly ICubeRepository _cubeRepository;
+    private readonly IMapper _mapper;
 
-    public SolveController(ISolveRepository solveRepository, ICubeRepository cubeRepository)
+    public SolveController(ISolveRepository solveRepository, ICubeRepository cubeRepository, IMapper mapper)
     {
         _solveRepository = solveRepository;
         _cubeRepository = cubeRepository;
+        _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        List<Solve> solves = await _solveRepository.GetAllSolvesAsync();
-        List<SolveDTO> solvesDTOs = solves.Select(s => s.ToSolveDTO()).ToList();
+        IEnumerable<Solve> solves = await _solveRepository.GetSolvesAsync();
 
-        return Ok(solvesDTOs);
-    }
-
-    [HttpGet("last/{count:int}")]
-    public async Task<IActionResult> GetLastNSolves([FromRoute] int count)
-    {
-        List<Solve> solves = await _solveRepository.GetLastNSolvesAsync(count);
-        List<SolveDTO> solvesDTOs = solves.Select(s => s.ToSolveDTO()).ToList();
-
-        return Ok(solvesDTOs);
+        return Ok(_mapper.Map<IEnumerable<SolveDTO>>(solves));
     }
 
     [HttpGet("{id:int}")]
@@ -50,7 +41,7 @@ public class SolveController : ControllerBase
             return NotFound();
         }
 
-        return Ok(solve.ToSolveDTO());
+        return Ok(_mapper.Map<SolveDTO>(solve));
     }
 
     [HttpPost("create")]
@@ -68,22 +59,12 @@ public class SolveController : ControllerBase
 
         if (cube is null)
         {
-            return NotFound("Cube not found.");
+            return NotFound();
         }
 
-        //if (!Enum.TryParse(solveCreateRequestDTO.SolveType, out SolveType solveTypeParsed))
-        //{
-        //    return BadRequest("Solve Type is not valid.");
-        //}
+        Solve createdSolve = await _solveRepository.CreateSolveAsync(_mapper.Map<Solve>(solveCreateRequestDTO));
 
-        //if (!TimeSpan.TryParse(solveCreateRequestDTO.SolveTime, out TimeSpan solveTimeParsed))
-        //{
-        //    return BadRequest("Solve Time is not valid.");
-        //}
-
-        Solve createdSolve = await _solveRepository.CreateSolveAsync(solveCreateRequestDTO.FromCreateRequestDTOToSolve());
-
-        return CreatedAtAction(nameof(GetById), new { id = createdSolve.Id }, createdSolve.ToSolveDTO());
+        return CreatedAtAction(nameof(GetById), new { id = createdSolve.Id }, _mapper.Map<SolveDTO>(createdSolve));
     }
 
     [HttpDelete("delete/{id:int}")]

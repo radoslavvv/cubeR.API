@@ -1,5 +1,4 @@
-﻿using cubeR.BusinessLogic.Mappers;
-using cubeR.BusinessLogic.Validations.Cube;
+﻿using AutoMapper;
 using cubeR.DataAccess.DTOs.Cube;
 using cubeR.DataAccess.Models;
 using cubeR.DataAccess.Repositories.Contracts;
@@ -14,19 +13,20 @@ namespace cubeR.API.Controllers;
 public class CubeController : ControllerBase
 {
     private readonly ICubeRepository _repository;
+    private readonly IMapper _mapper;
 
-    public CubeController(ICubeRepository repository)
+    public CubeController(ICubeRepository repository, IMapper mapper)
     {
         _repository = repository;
+        _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        List<Cube> cubes = await _repository.GetAllCubesAsync();
-        List<CubeDTO> cubeDTOS = cubes.Select(c=>c.ToCubeDTO()).ToList();   
+        IEnumerable<Cube> cubes = await _repository.GetCubesAsync();
 
-        return Ok(cubeDTOS);
+        return Ok(_mapper.Map<IEnumerable<CubeDTO>>(cubes));
     }
 
     [HttpGet("{id:int}")]
@@ -39,27 +39,27 @@ public class CubeController : ControllerBase
             return NotFound();
         }
 
-        return Ok(cube.ToCubeDTO());
+        return Ok(_mapper.Map<CubeDTO>(cube));
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] CubeCreateRequestDTO cubeCreateRequestDTO, 
+    public async Task<IActionResult> Create([FromBody] CubeCreateRequestDTO cubeCreateRequestDTO,
         [FromServices] IValidator<CubeCreateRequestDTO> validator)
     {
         ValidationResult validationResult = validator.Validate(cubeCreateRequestDTO);
 
-        if(!validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
             return BadRequest(validationResult.Errors);
         }
 
-        Cube createdCube = await _repository.CreateCubeAsync(cubeCreateRequestDTO.FromCreateRequestDTOToCube());
+        Cube createdCube = await _repository.CreateCubeAsync(_mapper.Map<Cube>(cubeCreateRequestDTO));
 
-        return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, createdCube.ToCubeDTO());
+        return CreatedAtAction(nameof(GetById), new { id = createdCube.Id }, _mapper.Map<CubeDTO>(createdCube));
     }
 
     [HttpPut("update/{id:int}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CubeUpdateRequestDTO cubeUpdateRequestDTO, 
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CubeUpdateRequestDTO cubeUpdateRequestDTO,
         [FromServices] IValidator<CubeUpdateRequestDTO> validator)
     {
         ValidationResult validationResult = validator.Validate(cubeUpdateRequestDTO);
@@ -76,7 +76,7 @@ public class CubeController : ControllerBase
             return NotFound();
         }
 
-        return Ok(updatedCube.ToCubeDTO());
+        return Ok(_mapper.Map<CubeDTO>(updatedCube));
     }
 
     [HttpDelete("delete/{id:int}")]

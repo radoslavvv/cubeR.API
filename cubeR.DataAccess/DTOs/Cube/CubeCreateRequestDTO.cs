@@ -1,3 +1,5 @@
-﻿namespace cubeR.DataAccess.DTOs.Cube;
+﻿using cubeR.DataAccess.Enums;
 
-public record CubeCreateRequestDTO(string Name, int SidesCount, int PiecesCount);
+namespace cubeR.DataAccess.DTOs.Cube;
+
+public record CubeCreateRequestDTO(string Name, int SidesCount, int PiecesCount, double Weight, CubeDifficultyLevel DifficultyLevel, int ReleaseYear, string Material);

@@ -1,12 +1,11 @@
-﻿using cubeR.DataAccess.Models;
+﻿using cubeR.DataAccess.DTOs.Solve;
+using cubeR.DataAccess.Models;
 
 namespace cubeR.DataAccess.Repositories.Contracts;
 
 public interface ISolveRepository
 {
-    Task<List<Solve>> GetAllSolvesAsync();
-
-    Task<List<Solve>> GetLastNSolvesAsync(int n);
+    Task<IEnumerable<Solve>> GetSolvesAsync();
 
     Task<Solve?> GetSolveByIdAsync(int id);
 

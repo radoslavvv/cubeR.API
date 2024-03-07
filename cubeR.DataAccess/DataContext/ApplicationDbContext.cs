@@ -5,9 +5,9 @@ namespace cubeR.DataAccess.DataContext;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions)
+        : base(dbContextOptions)
     {
-
     }
 
     public DbSet<Solve> Solves { get; set; }

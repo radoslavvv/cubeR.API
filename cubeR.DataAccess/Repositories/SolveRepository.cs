@@ -1,4 +1,5 @@
 ﻿using cubeR.DataAccess.DataContext;
+using cubeR.DataAccess.DTOs.Solve;
 using cubeR.DataAccess.Models;
 using cubeR.DataAccess.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ public class SolveRepository : ISolveRepository
         return solveModel;
     }
 
-    public async Task<List<Solve>> GetAllSolvesAsync()
+    public async Task<IEnumerable<Solve>> GetSolvesAsync()
     {
         return await _context.Solves.ToListAsync();
     }
@@ -29,11 +30,6 @@ public class SolveRepository : ISolveRepository
     public async Task<Solve?> GetSolveByIdAsync(int id)
     {
         return await _context.Solves.FirstOrDefaultAsync(s => s.Id == id);
-    }
-
-    public async Task<List<Solve>> GetLastNSolvesAsync(int n)
-    {
-        return await _context.Solves.OrderByDescending(s => s.Id).Take(n).ToListAsync();
     }
 
     public async Task<Solve?> DeleteSolveAsync(int id)
